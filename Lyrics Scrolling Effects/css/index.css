@@ -1,0 +1,52 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #000;
+    color: #666;
+    text-align: center;
+}
+
+audio {
+    width: 450px; /*shortcut= w450px */
+    margin: 20px 0;
+}
+
+.image-container {
+    text-align: center; /* Centers the image horizontally */
+    margin: 20px; /* Adds some space between the image and lyrics */
+}
+
+.image-container img {
+    width: 200px; /* Adjust as needed */
+    height: auto;
+    filter: blur(0.7px); /* Apply slight blur */
+    border-radius: 5px; /* Optional: makes it rounded */
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3); /* Optional: adds glow effect */
+}
+
+.container {
+    /* border: 2px solid #fff;*/ /*for easy manage */
+    height: 420px;
+    overflow: hidden; /*This is used to hide the data(lyrics) which is longer than the container height*/
+}
+
+.container ul {
+    /* border: 2px solid #fff;*/ /*for easy manage */
+    list-style: none;
+    transition: 0.6s
+}
+
+.container li {
+    height: 30px;
+    line-height: 30px;
+    transition: 0.2s
+}
+
+.container li.active {
+    color: #fff;
+    /* font-size: 2em; */ /*Why no use this? --> Because it will destroy the setting(排版) when it changes*/
+    transform: scale(1.2);
+}
