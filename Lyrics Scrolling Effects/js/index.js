@@ -161,36 +161,163 @@ Audio.addEventListener("play", () => {
   isInit = true;
 });
 
+// Bar Type
+
+// function draw() {
+//   requestAnimationFrame(draw);
+//   if (!isInit) return;
+
+//   // 清空画布
+//   const { width, height } = cvs;
+//   ctx.clearRect(0, 0, width, height);
+
+//   analyser.getByteFrequencyData(buffer);
+
+//   const len = buffer.length / 2.5;
+//   const count = len * 2;
+//   const barWidth = width / count; // 单根柱状图的宽度
+
+//   for (let i = 0; i < len; i++) {
+//     //画柱状图
+//     const v = buffer[i];
+//     const barHeight = (v / 255) * height;
+//     const x1 = i * barWidth + width / 2;
+//     const x2 = width / 2 - (i + 1) * barWidth;
+//     const y = height - barHeight;
+
+//     // ** Dynamic Color Calculation **
+//     // Hue shifts from 240 (blue) to 0 (red) based on height
+//     const hue = (v / 255) * 240; // 240 = blue, 0 = red
+//     ctx.fillStyle = `hsl(${hue}, 100%, 40%)`;
+
+//     ctx.fillRect(x1, y, barWidth - 1, barHeight);
+//     ctx.fillRect(x2, y, barWidth - 1, barHeight);
+//   }
+// }
+
+// Circle Type
+
+// function draw() {
+//   requestAnimationFrame(draw);
+//   if (!isInit) return;
+
+//   // Clear canvas
+//   ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+//   analyser.getByteFrequencyData(buffer);
+
+//   const centerX = cvs.width / 2;
+//   const centerY = cvs.height / 2;
+//   const radius = 120; // Base circle radius
+//   const barCount = buffer.length;
+//   const angleStep = (Math.PI * 2) / barCount;
+
+//   ctx.lineWidth = 2;
+//   ctx.strokeStyle = "#fff"; // White base stroke
+
+//   for (let i = 0; i < barCount; i++) {
+//     const value = buffer[i];
+//     if (value < 10) continue; // Skip tiny bars
+//     const barHeight = (value / 255) * 100 + 10; // Scale height
+//     const angle = i * angleStep;
+
+//     const x1 = centerX + Math.cos(angle) * radius;
+//     const y1 = centerY + Math.sin(angle) * radius;
+
+//     const x2 = centerX + Math.cos(angle) * (radius + barHeight);
+//     const y2 = centerY + Math.sin(angle) * (radius + barHeight);
+
+//     // Gradient effect
+//     const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+//     gradient.addColorStop(0, `hsl(${i * 3}, 100%, 70%)`); // Dynamic colors
+//     gradient.addColorStop(1, `hsl(${i * 3}, 100%, 40%)`);
+
+//     ctx.strokeStyle = gradient;
+//     ctx.beginPath();
+//     ctx.moveTo(x1, y1);
+//     ctx.lineTo(x2, y2);
+//     ctx.stroke();
+//   }
+// }
+
+// Waveform
+
+// function draw() {
+//   requestAnimationFrame(draw);
+//   if (!isInit) return;
+
+//   ctx.clearRect(0, 0, cvs.width, cvs.height);
+//   analyser.getByteTimeDomainData(buffer); // Use waveform data instead of frequency
+
+//   const width = cvs.width;
+//   const height = cvs.height;
+//   const centerY = height / 2;
+//   const sliceWidth = width / buffer.length;
+
+//   ctx.beginPath();
+//   ctx.lineWidth = 2;
+//   ctx.strokeStyle = "rgba(0, 150, 255, 0.8)"; // Neon blue
+//   ctx.shadowBlur = 10;
+//   ctx.shadowColor = "rgba(0, 150, 255, 0.5)";
+
+//   let x = 0;
+
+//   for (let i = 0; i < buffer.length; i++) {
+//     const value = buffer[i] / 255; // Normalize values (0 to 1)
+//     const y = centerY + (value - 0.5) * height * 0.8; // Map to canvas
+
+//     if (i === 0) {
+//       ctx.moveTo(x, y);
+//     } else {
+//       ctx.lineTo(x, y);
+//     }
+
+//     x += sliceWidth;
+//   }
+
+//   ctx.stroke();
+// }
+
 function draw() {
   requestAnimationFrame(draw);
   if (!isInit) return;
 
-  // 清空画布
-  const { width, height } = cvs;
-  ctx.clearRect(0, 0, width, height);
+  ctx.clearRect(0, 0, cvs.width, cvs.height);
+  analyser.getByteTimeDomainData(buffer); // Use waveform data
 
-  analyser.getByteFrequencyData(buffer);
+  const width = cvs.width;
+  const height = cvs.height;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radius = Math.min(centerX, centerY) * 0.6; // Base radius
 
-  const len = buffer.length / 2.5;
-  const count = len * 2;
-  const barWidth = width / count; // 单根柱状图的宽度
+  ctx.beginPath();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(0, 150, 255, 0.8)"; // Neon blue
+  ctx.shadowBlur = 15;
+  ctx.shadowColor = "rgba(0, 150, 255, 0.5)";
+  ctx.fillStyle = "rgba(0, 150, 255, 0.1)";
 
-  for (let i = 0; i < len; i++) {
-    //画柱状图
-    const v = buffer[i];
-    const barHeight = (v / 255) * height;
-    const x1 = i * barWidth + width / 2;
-    const x2 = width / 2 - (i + 1) * barWidth;
-    const y = height - barHeight;
+  let angleStep = (Math.PI * 2) / buffer.length; // Angle per data point
 
-    // ** Dynamic Color Calculation **
-    // Hue shifts from 240 (blue) to 0 (red) based on height
-    const hue = (v / 255) * 240; // 240 = blue, 0 = red
-    ctx.fillStyle = `hsl(${hue}, 100%, 40%)`;
+  ctx.moveTo(centerX, centerY); // Move to center before drawing
 
-    ctx.fillRect(x1, y, barWidth - 1, barHeight);
-    ctx.fillRect(x2, y, barWidth - 1, barHeight);
+  for (let i = 0; i < buffer.length; i++) {
+    const value = buffer[i] / 255; // Normalize (0 to 1)
+    const waveHeight = radius + (value - 0.5) * 50; // Wave size
+
+    const angle = i * angleStep;
+    const x = centerX + waveHeight * Math.cos(angle);
+    const y = centerY + waveHeight * Math.sin(angle);
+
+    if (i === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
   }
-}
 
+  ctx.closePath(); // Close the shape to form a circle
+  ctx.stroke();
+}
 draw();
